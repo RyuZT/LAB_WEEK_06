@@ -1,6 +1,5 @@
 package com.example.lab_week_06
 
-// Ditambahkan: Import yang diperlukan
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -8,14 +7,21 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.lab_week_06.model.CatBreed
 import com.example.lab_week_06.model.CatModel
 import com.example.lab_week_06.model.Gender
+// Dihapus: Import yang salah -> import android.content.DialogInterface.OnClickListener
 
-// Dihapus: Baris `private var TextView.text: String` yang menyebabkan error
 private val FEMALE_SYMBOL = "\u2640"
 private val MALE_SYMBOL = "\u2642"
 private const val UNKNOWN_SYMBOL = "?"
 
 // File: CatViewHolder.kt
-class CatViewHolder(containerView: View, private val imageLoader: ImageLoader) : RecyclerView.ViewHolder(containerView) {
+class CatViewHolder(
+    private val containerView: View,
+    private val imageLoader: ImageLoader,
+    // Diperbaiki: Menggunakan OnClickListener dari CatAdapter
+    private val onClickListener: CatAdapter.OnClickListener
+// Diperbaiki: Sintaks constructor yang salah
+) : RecyclerView.ViewHolder(containerView) {
+
     private val catBiographyView: TextView by lazy {
         containerView.findViewById(R.id.cat_biography)
     }
@@ -33,6 +39,11 @@ class CatViewHolder(containerView: View, private val imageLoader: ImageLoader) :
     }
 
     fun bindData(cat: CatModel) {
+        containerView.setOnClickListener {
+            // Memanggil listener dari adapter saat item di-klik
+            onClickListener.onItemClick(cat)
+        }
+
         imageLoader.loadImage(cat.imageUrl, catPhotoView)
         catNameView.text = cat.name
         catBreedView.text = when (cat.breed) {
@@ -48,4 +59,5 @@ class CatViewHolder(containerView: View, private val imageLoader: ImageLoader) :
             else -> UNKNOWN_SYMBOL
         }
     }
+    // Dihapus: Interface OnClickListener yang duplikat, kita pakai yang ada di CatAdapter
 }
