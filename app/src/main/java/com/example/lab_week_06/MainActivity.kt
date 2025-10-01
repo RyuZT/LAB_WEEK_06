@@ -1,8 +1,9 @@
 package com.example.lab_week_06
 
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog // Ditambahkan: Import untuk AlertDialog
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.ItemTouchHelper // Ditambahkan: Import untuk ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.lab_week_06.model.CatBreed
@@ -18,7 +19,6 @@ class MainActivity : AppCompatActivity() {
         CatAdapter(
             layoutInflater,
             GlideImageLoader(this),
-            // Diperbaiki: Menambahkan tipe interface yang diimplementasikan
             object : CatAdapter.OnClickListener {
                 override fun onItemClick(cat: CatModel) = showSelectionDialog(cat)
             }
@@ -29,10 +29,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Setup RecyclerView dan Adapter
         recyclerView.adapter = catAdapter
         recyclerView.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
+        // Mengisi data ke Adapter
         catAdapter.setData(
             listOf(
                 CatModel(
@@ -58,6 +60,10 @@ class MainActivity : AppCompatActivity() {
                 )
             )
         )
+
+        // Diperbaiki: Kode ItemTouchHelper dipindahkan ke dalam method onCreate
+        val itemTouchHelper = ItemTouchHelper(catAdapter.swipeToDeleteCallback)
+        itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
     private fun showSelectionDialog(cat: CatModel) {
